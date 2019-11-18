@@ -47,7 +47,7 @@ class ViewController: UIViewController {
         tableView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.left.right.equalToSuperview()
-            $0.bottom.equalToSuperview().inset(toolbarHeight + view.safeAreaInsets.bottom)
+            $0.bottom.equalToSuperview().inset(getBottomMargin())
         }
         Driver.just(Array(1...100))
             .drive(tableView.rx.items(cellIdentifier: "Cell", cellType: UITableViewCell.self)) { row, i, cell in
@@ -70,8 +70,12 @@ class ViewController: UIViewController {
     
     override func viewSafeAreaInsetsDidChange() {
         tableView.snp.updateConstraints {
-            $0.bottom.equalToSuperview().inset(toolbarHeight + view.safeAreaInsets.bottom)
+            $0.bottom.equalToSuperview().inset(getBottomMargin())
         }
+    }
+    
+    private func getBottomMargin() -> CGFloat {
+        return toolbarHeight + view.safeAreaInsets.bottom
     }
 
 }
