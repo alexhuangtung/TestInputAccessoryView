@@ -49,7 +49,7 @@ class ViewController: UIViewController {
                 cell.transform = CGAffineTransform(rotationAngle: .pi)
             }
             .disposed(by: bag)
-        KeyboardEventListener.keyboardWillChangeFrame
+        NotificationCenter.default.rx.keyboardEvent
             .subscribe(onNext: { [unowned self] willShow, duration, curve, keyboardEndFrame in
                 let topInset = keyboardEndFrame.height
                 if self.tableView.contentOffset.y <= -self.tableView.contentInset.top {
@@ -115,30 +115,23 @@ enum KeyboardError: Error {
     case endFrameNotFound
 }
 
-typealias KeyboardInfo = (
-    willShow: Bool,
-    duration: TimeInterval,
-    curve: UIView.AnimationOptions,
-    keyboardEndFrame: CGRect
-)
+typealias KeyboardEvent = (willShow: Bool, duration: TimeInterval, curve: UIView.AnimationOptions, keyboardEndFrame: CGRect)
 
-struct KeyboardEventListener {
-
-    static let keyboardWillChangeFrame =
-        NotificationCenter.default
-        .rx.notification(UIResponder.keyboardWillChangeFrameNotification)
-        .map { $0.userInfo }
-        .unwrap()
-        .map { (userInfo) -> KeyboardInfo in
-            guard let keyboardEndFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { throw KeyboardError.endFrameNotFound }
-            let duration: TimeInterval = (userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue ?? 0
-            let animationCurveRawNSN = userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? NSNumber
-            let animationCurveRaw = animationCurveRawNSN?.uintValue ?? UIView.AnimationOptions().rawValue
-            let animationCurve: UIView.AnimationOptions = UIView.AnimationOptions(rawValue: animationCurveRaw)
-            let willShow = keyboardEndFrame.minY < UIScreen.main.bounds.height
-            return (willShow, duration, animationCurve, keyboardEndFrame)
-        }
-        .share()
+extension Reactive where Base: NotificationCenter {
+    var keyboardEvent: Observable<KeyboardEvent> {
+        return notification(UIResponder.keyboardWillChangeFrameNotification)
+            .map { $0.userInfo }
+            .unwrap()
+            .map { userInfo -> KeyboardEvent in
+                let keyboardEndFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as! CGRect
+                let duration = (userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue ?? 0
+                let animationCurveRawNSN = userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? NSNumber
+                let animationCurveRaw = animationCurveRawNSN?.uintValue ?? UIView.AnimationOptions().rawValue
+                let animationCurve = UIView.AnimationOptions(rawValue: animationCurveRaw)
+                let willShow = keyboardEndFrame.minY < UIScreen.main.bounds.height
+                return (willShow, duration, animationCurve, keyboardEndFrame)
+            }
+    }
 }
 
 
