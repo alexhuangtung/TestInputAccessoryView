@@ -204,6 +204,18 @@ class CommentView: UIView {
         return btn
     }()
     
+    @discardableResult
+    override func becomeFirstResponder() -> Bool {
+        flexibleTextView.becomeFirstResponder()
+        return super.becomeFirstResponder()
+    }
+    
+    @discardableResult
+    override func resignFirstResponder() -> Bool {
+        flexibleTextView.resignFirstResponder()
+        return super.resignFirstResponder()
+    }
+    
     func setup() {
         backgroundColor = .randomLight
         addSubview(bubbleView)
