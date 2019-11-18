@@ -11,6 +11,7 @@ import SnapKit
 import RxSwift
 import RxCocoa
 import RxSwiftExt
+import RxGesture
 
 private let toolbarHeight: CGFloat = 54
 
@@ -128,7 +129,7 @@ class ToolbarView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private let commentlabel: UILabel = {
+    fileprivate let commentlabel: UILabel = {
         let lb = UILabel()
         lb.font = UIFont.systemFont(ofSize: 14, weight: .regular)
         lb.textColor = .white
@@ -167,6 +168,15 @@ class ToolbarView: UIView {
     
     func setText(_ text: String) {
         commentlabel.text = text
+    }
+}
+
+extension Reactive where Base: ToolbarView {
+    var didTapCommentLabel: ControlEvent<UITapGestureRecognizer> {
+        return ControlEvent(events:
+            base.commentlabel.rx.tapGesture()
+                .when(.recognized)
+        )
     }
 }
 
