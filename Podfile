@@ -9,5 +9,6 @@ target 'TestInputAccessoryView' do
   pod 'RxCocoa'
   pod 'RxSwiftExt'
   pod 'SnapKit'
+  pod 'RxGesture'
 
 end
