@@ -168,11 +168,19 @@ class CommentView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    private let bubbleView: UIView = {
+        let v = UIView()
+        v.backgroundColor = .randomDark
+        v.layer.cornerRadius = 17
+        v.layer.masksToBounds = true
+        return v
+    }()
+    
     private let flexibleTextView: FlexibleTextView = {
         let tv = FlexibleTextView(maxHeight: 80)
-        tv.font = .systemFont(ofSize: 20, weight: .regular)
+        tv.font = .systemFont(ofSize: 14, weight: .regular)
+        tv.backgroundColor = .clear
         tv.textColor = .white
-        tv.backgroundColor = .randomDark
         return tv
     }()
     
@@ -185,20 +193,30 @@ class CommentView: UIView {
     }()
     
     func setup() {
-        addSubview(flexibleTextView)
+        backgroundColor = .randomLight
+        addSubview(bubbleView)
         addSubview(sendButton)
-        flexibleTextView.layer.cornerRadius = 17
-        flexibleTextView.layer.masksToBounds = true
-        flexibleTextView.snp.makeConstraints {
-            $0.top.bottom.equalToSuperview().inset(10)
+        bubbleView.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(10)
+            $0.bottom.equalToSuperview().inset(10)
             $0.left.equalToSuperview().inset(8)
+            $0.height.greaterThanOrEqualTo(34)
         }
+        sendButton.setContentCompressionResistancePriority(.defaultHigh + 1, for: .horizontal)
         sendButton.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
         sendButton.snp.makeConstraints {
             $0.height.equalTo(toolbarHeight)
-            $0.left.equalTo(flexibleTextView.snp.right).offset(8)
+            $0.left.equalTo(bubbleView.snp.right).offset(8)
             $0.right.equalToSuperview().inset(8)
             $0.bottom.equalToSuperview()
+        }
+        
+        bubbleView.addSubview(flexibleTextView)
+        flexibleTextView.snp.makeConstraints {
+            $0.top.greaterThanOrEqualToSuperview()
+            $0.bottom.lessThanOrEqualToSuperview()
+            $0.centerY.equalToSuperview()
+            $0.left.right.equalToSuperview().inset(16)
         }
     }
 }
