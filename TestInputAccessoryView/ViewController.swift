@@ -45,7 +45,8 @@ class ViewController: UIViewController {
         tableView.backgroundColor = .clear
         tableView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
-            $0.left.right.bottom.equalToSuperview()
+            $0.left.right.equalToSuperview()
+            $0.bottom.equalToSuperview().inset(toolbarHeight + view.safeAreaInsets.bottom)
         }
         Driver.just(Array(1...100))
             .drive(tableView.rx.items(cellIdentifier: "Cell", cellType: UITableViewCell.self)) { row, i, cell in
@@ -54,16 +55,12 @@ class ViewController: UIViewController {
                 cell.transform = CGAffineTransform(rotationAngle: .pi)
             }
             .disposed(by: bag)
-        NotificationCenter.default.rx.keyboardEvent
-            .subscribe(onNext: { [unowned self] willShow, duration, curve, keyboardEndFrame in
-                let topInset = keyboardEndFrame.height
-                if self.tableView.contentOffset.y <= -self.tableView.contentInset.top {
-                    self.tableView.contentOffset = CGPoint(x: 0, y: -topInset)
-                }
-                self.tableView.contentInset = UIEdgeInsets(top: topInset, left: 0, bottom: 0, right: 0)
-                self.tableView.scrollIndicatorInsets = UIEdgeInsets(top: topInset, left: 0, bottom: 0, right: UIScreen.main.bounds.width - 8)
-            })
-            .disposed(by: bag)
+    }
+    
+    override func viewSafeAreaInsetsDidChange() {
+        tableView.snp.updateConstraints {
+            $0.bottom.equalToSuperview().inset(toolbarHeight + view.safeAreaInsets.bottom)
+        }
     }
 
 }
@@ -95,24 +92,71 @@ class FooView: UIView {
         return tv
     }()
     
-    private let dummyView: UIView = {
-        let v = UIView()
+    private let toolbarView: ToolbarView = {
+        let v = ToolbarView()
         return v
     }()
     
     private func setup() {
         layer.borderWidth = 1
         autoresizingMask = .flexibleHeight
-        addSubview(dummyView)
-        dummyView.snp.makeConstraints {
+        addSubview(toolbarView)
+        toolbarView.snp.makeConstraints {
             $0.top.left.right.equalToSuperview()
-            $0.height.equalTo(toolbarHeight)
             $0.bottom.equalTo(safeAreaLayoutGuide)
         }
     }
     
     override var intrinsicContentSize: CGSize {
         return .zero
+    }
+}
+
+class ToolbarView: UIView {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private let commentlabel: UILabel = {
+        let lb = UILabel()
+        lb.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        lb.textColor = .white
+        lb.backgroundColor = .randomDark
+        lb.text = "Leave a message!"
+        return lb
+    }()
+    
+    private let shareButton: UIButton = {
+        let btn = UIButton(type: .system)
+        btn.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        btn.setTitleColor(.black, for: .normal)
+        btn.setTitle("Share", for: .normal)
+        return btn
+    }()
+    
+    private func setup() {
+        snp.makeConstraints {
+            $0.height.equalTo(toolbarHeight)
+        }
+        addSubview(commentlabel)
+        addSubview(shareButton)
+        commentlabel.layer.cornerRadius = 17
+        commentlabel.layer.masksToBounds = true
+        commentlabel.snp.makeConstraints {
+            $0.height.equalTo(34)
+            $0.centerY.equalToSuperview()
+            $0.left.equalToSuperview().inset(8)
+        }
+        shareButton.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.left.equalTo(commentlabel.snp.right).offset(8)
+            $0.right.equalToSuperview().inset(8)
+        }
     }
 }
 
