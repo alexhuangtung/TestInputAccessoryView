@@ -12,6 +12,8 @@ import RxSwift
 import RxCocoa
 import RxSwiftExt
 
+private let toolbarHeight: CGFloat = 54
+
 class ViewController: UIViewController {
     
     private let fooView = FooView()
@@ -93,13 +95,19 @@ class FooView: UIView {
         return tv
     }()
     
+    private let dummyView: UIView = {
+        let v = UIView()
+        return v
+    }()
+    
     private func setup() {
         layer.borderWidth = 1
         autoresizingMask = .flexibleHeight
-        addSubview(flexibleTextView)
-        flexibleTextView.snp.makeConstraints {
-            $0.top.left.right.equalToSuperview().inset(8)
-            $0.bottom.equalTo(safeAreaLayoutGuide).inset(8)
+        addSubview(dummyView)
+        dummyView.snp.makeConstraints {
+            $0.top.left.right.equalToSuperview()
+            $0.height.equalTo(toolbarHeight)
+            $0.bottom.equalTo(safeAreaLayoutGuide)
         }
     }
     
