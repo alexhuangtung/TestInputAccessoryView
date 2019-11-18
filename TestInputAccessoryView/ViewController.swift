@@ -85,23 +85,21 @@ class FooView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private let flexibleTextView: FlexibleTextView = {
-        let tv = FlexibleTextView(minHeight: 34, maxHeight: 80)
-        tv.layer.borderWidth = 1
-        tv.font = .systemFont(ofSize: 20, weight: .regular)
-        return tv
-    }()
-    
     private let toolbarView: ToolbarView = {
         let v = ToolbarView()
+        return v
+    }()
+    
+    private let commentView: CommentView = {
+        let v = CommentView()
         return v
     }()
     
     private func setup() {
         layer.borderWidth = 1
         autoresizingMask = .flexibleHeight
-        addSubview(toolbarView)
-        toolbarView.snp.makeConstraints {
+        addSubview(commentView)
+        commentView.snp.makeConstraints {
             $0.top.left.right.equalToSuperview()
             $0.bottom.equalTo(safeAreaLayoutGuide)
         }
@@ -156,6 +154,51 @@ class ToolbarView: UIView {
             $0.centerY.equalToSuperview()
             $0.left.equalTo(commentlabel.snp.right).offset(8)
             $0.right.equalToSuperview().inset(8)
+        }
+    }
+}
+
+class CommentView: UIView {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private let flexibleTextView: FlexibleTextView = {
+        let tv = FlexibleTextView(minHeight: 34, maxHeight: 80)
+        tv.font = .systemFont(ofSize: 20, weight: .regular)
+        tv.textColor = .white
+        tv.backgroundColor = .randomDark
+        return tv
+    }()
+    
+    private let sendButton: UIButton = {
+        let btn = UIButton(type: .system)
+        btn.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        btn.setTitleColor(.black, for: .normal)
+        btn.setTitle("Send", for: .normal)
+        return btn
+    }()
+    
+    func setup() {
+        addSubview(flexibleTextView)
+        addSubview(sendButton)
+        flexibleTextView.layer.cornerRadius = 17
+        flexibleTextView.layer.masksToBounds = true
+        flexibleTextView.snp.makeConstraints {
+            $0.top.bottom.equalToSuperview().inset(10)
+            $0.left.equalToSuperview().inset(8)
+        }
+        sendButton.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
+        sendButton.snp.makeConstraints {
+            $0.height.equalTo(toolbarHeight)
+            $0.left.equalTo(flexibleTextView.snp.right).offset(8)
+            $0.right.equalToSuperview().inset(8)
+            $0.bottom.equalToSuperview()
         }
     }
 }
