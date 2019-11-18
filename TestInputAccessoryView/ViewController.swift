@@ -213,10 +213,10 @@ class CommentView: UIView {
         sendButton.setContentCompressionResistancePriority(.defaultHigh + 1, for: .horizontal)
         sendButton.setContentHuggingPriority(.defaultLow + 1, for: .horizontal)
         sendButton.snp.makeConstraints {
-            $0.height.equalTo(toolbarHeight)
+            $0.height.equalTo(24)
             $0.left.equalTo(bubbleView.snp.right).offset(8)
             $0.right.equalToSuperview().inset(8)
-            $0.bottom.equalToSuperview()
+            $0.bottom.equalToSuperview().inset(15)
         }
         
         bubbleView.addSubview(flexibleTextView)
