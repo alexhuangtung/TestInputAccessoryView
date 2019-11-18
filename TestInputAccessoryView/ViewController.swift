@@ -64,6 +64,14 @@ class ViewController: UIViewController {
                 } else {
                     self.fooView.hideCommentView()
                 }
+                
+                let topInset = keyboardEndFrame.height - self.getBottomMargin()
+                if self.tableView.contentOffset.y <= -self.tableView.contentInset.top {
+                    self.tableView.contentOffset = CGPoint(x: 0, y: -topInset)
+                }
+                self.tableView.contentInset = UIEdgeInsets(top: topInset, left: 0, bottom: 0, right: 0)
+                self.tableView.verticalScrollIndicatorInsets = UIEdgeInsets(top: topInset, left: 0, bottom: 0, right: UIScreen.main.bounds.width - 8)
+
             })
             .disposed(by: bag)
     }
