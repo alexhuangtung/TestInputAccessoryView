@@ -117,6 +117,20 @@ class FooView: UIView {
     override var intrinsicContentSize: CGSize {
         return .zero
     }
+    
+    func showCommentView() {
+        toolbarView.isHidden = true
+        commentView.isHidden = false
+        constraintToolbarViewEdgesSnapToSafeArea.deactivate()
+        constraintCommentViewEdgesSnapToSafeArea.activate()
+    }
+    
+    func hideCommentView() {
+        commentView.isHidden = true
+        toolbarView.isHidden = false
+        constraintCommentViewEdgesSnapToSafeArea.deactivate()
+        constraintToolbarViewEdgesSnapToSafeArea.activate()
+    }
 }
 
 class ToolbarView: UIView {
