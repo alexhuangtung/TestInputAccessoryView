@@ -100,6 +100,8 @@ class FooView: UIView {
     
     private var constraintCommentViewEdgesSnapToSafeArea: Constraint!
     
+    private let bag = DisposeBag()
+    
     private func setup() {
         layer.borderWidth = 1
         autoresizingMask = .flexibleHeight
@@ -112,6 +114,11 @@ class FooView: UIView {
             constraintCommentViewEdgesSnapToSafeArea = $0.edges.equalTo(safeAreaLayoutGuide).constraint
         }
         commentView.isHidden = true
+        toolbarView.rx.didTapCommentLabel
+            .subscribe(onNext: { [unowned self] _ in
+                self.commentView.becomeFirstResponder()
+            })
+            .disposed(by: bag)
     }
     
     override var intrinsicContentSize: CGSize {
