@@ -95,14 +95,22 @@ class FooView: UIView {
         return v
     }()
     
+    private var constraintToolbarViewEdgesSnapToSafeArea: Constraint!
+    
+    private var constraintCommentViewEdgesSnapToSafeArea: Constraint!
+    
     private func setup() {
         layer.borderWidth = 1
         autoresizingMask = .flexibleHeight
+        addSubview(toolbarView)
         addSubview(commentView)
-        commentView.snp.makeConstraints {
-            $0.top.left.right.equalToSuperview()
-            $0.bottom.equalTo(safeAreaLayoutGuide)
+        toolbarView.snp.makeConstraints {
+            constraintToolbarViewEdgesSnapToSafeArea = $0.edges.equalTo(safeAreaLayoutGuide).constraint
         }
+        commentView.snp.prepareConstraints {
+            constraintCommentViewEdgesSnapToSafeArea = $0.edges.equalTo(safeAreaLayoutGuide).constraint
+        }
+        commentView.isHidden = true
     }
     
     override var intrinsicContentSize: CGSize {
