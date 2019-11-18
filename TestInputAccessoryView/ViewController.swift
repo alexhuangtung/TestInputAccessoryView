@@ -169,7 +169,7 @@ class CommentView: UIView {
     }
     
     private let flexibleTextView: FlexibleTextView = {
-        let tv = FlexibleTextView(minHeight: 34, maxHeight: 80)
+        let tv = FlexibleTextView(maxHeight: 80)
         tv.font = .systemFont(ofSize: 20, weight: .regular)
         tv.textColor = .white
         tv.backgroundColor = .randomDark
@@ -240,16 +240,9 @@ extension Reactive where Base: NotificationCenter {
 
 
 class FlexibleTextView: UITextView {
-    private let minHeight: CGFloat
     private let maxHeight: CGFloat
 
-    init(
-        minHeight: CGFloat,
-        maxHeight: CGFloat
-    ) {
-        guard minHeight > 0.0, maxHeight > 0.0 else { fatalError() }
-
-        self.minHeight = minHeight
+    init(maxHeight: CGFloat) {
         self.maxHeight = maxHeight
         super.init(frame: .zero, textContainer: nil)
         textContainer.lineFragmentPadding = 0
@@ -284,13 +277,10 @@ class FlexibleTextView: UITextView {
             size.height = layoutManager.usedRect(for: textContainer).height + textContainerInset.top + textContainerInset.bottom
         }
         
-        if size.height > maxHeight {
+        if maxHeight > 0.0 && size.height > maxHeight {
             size.height = maxHeight
             isScrollEnabled = true
-        } else if size.height > minHeight {
-            isScrollEnabled = false
         } else {
-            size.height = minHeight
             isScrollEnabled = false
         }
         
