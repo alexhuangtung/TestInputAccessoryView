@@ -164,6 +164,10 @@ class ToolbarView: UIView {
             $0.right.equalToSuperview().inset(8)
         }
     }
+    
+    func setText(_ text: String) {
+        commentlabel.text = text
+    }
 }
 
 class CommentView: UIView {
@@ -226,6 +230,10 @@ class CommentView: UIView {
             $0.centerY.equalToSuperview()
             $0.left.right.equalToSuperview().inset(16)
         }
+    }
+    
+    func setText(_ text: String?) {
+        flexibleTextView.text = text
     }
 }
 
