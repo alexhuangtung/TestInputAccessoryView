@@ -38,13 +38,16 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .randomLight
         view.addSubview(tableView)
+        tableView.backgroundColor = .clear
         tableView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.left.right.bottom.equalToSuperview()
         }
         Driver.just(Array(1...100))
             .drive(tableView.rx.items(cellIdentifier: "Cell", cellType: UITableViewCell.self)) { row, i, cell in
+                cell.backgroundColor = .clear
                 cell.textLabel?.text = i.description
                 cell.transform = CGAffineTransform(rotationAngle: .pi)
             }
@@ -93,7 +96,6 @@ class FooView: UIView {
     private func setup() {
         layer.borderWidth = 1
         autoresizingMask = .flexibleHeight
-        backgroundColor = .white
         addSubview(flexibleTextView)
         flexibleTextView.snp.makeConstraints {
             $0.top.left.right.equalToSuperview().inset(8)
