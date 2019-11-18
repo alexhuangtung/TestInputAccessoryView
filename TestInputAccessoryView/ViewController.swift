@@ -56,6 +56,16 @@ class ViewController: UIViewController {
                 cell.transform = CGAffineTransform(rotationAngle: .pi)
             }
             .disposed(by: bag)
+        
+        NotificationCenter.default.rx.keyboardEvent
+            .subscribe(onNext: { willShow, duration, curve, keyboardEndFrame in
+                if keyboardEndFrame.height > 300 {
+                    self.fooView.showCommentView()
+                } else {
+                    self.fooView.hideCommentView()
+                }
+            })
+            .disposed(by: bag)
     }
     
     override func viewSafeAreaInsetsDidChange() {
